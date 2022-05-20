@@ -1,0 +1,67 @@
+603. Consecutive Available Seats
+Easy
+
+SQL Schema
+Table: Cinema
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| seat_id     | int  |
+| free        | bool |
++-------------+------+
+seat_id is an auto-increment primary key column for this table.
+Each row of this table indicates whether the ith seat is free or not. 1 means free while 0 means occupied.
+ 
+
+Write an SQL query to report all the consecutive available seats in the cinema.
+
+Return the result table ordered by seat_id in ascending order.
+
+The test cases are generated so that more than two seats are consecutively available.
+
+The query result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Cinema table:
++---------+------+
+| seat_id | free |
++---------+------+
+| 1       | 1    |
+| 2       | 0    |
+| 3       | 1    |
+| 4       | 1    |
+| 5       | 1    |
++---------+------+
+Output: 
++---------+
+| seat_id |
++---------+
+| 3       |
+| 4       |
+| 5       |
++---------+
+
+Sol:
+
+select
+    newTable.seat_id
+from
+    (select
+        seat_id,free,lead(free,1) over(order by seat_id) as nextSeat , 
+		lag(free,1) over (order by seat_id) as previousSeat
+    from
+        Cinema) as newTable
+where
+    newTable.free = 1 and newTable.nextSeat = 1
+    or
+    newTable.free = 1 and newTable.previousSeat = 1
+order by 
+    newTable.seat_id
+
+Runtime: 642 ms, faster than 8.56% of MySQL online submissions for Consecutive Available Seats.
+Memory Usage: 0B, less than 100.00% of MySQL online submissions for Consecutive Available Seats.
